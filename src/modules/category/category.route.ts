@@ -1,11 +1,10 @@
-import express from "express";
-import { CategoryControllers } from "./category.controller";
-import { CategoryValidations } from "./category.validation";
-import validateRequest from "../../middlewares/validateRequest";
-import validateParams from "../../middlewares/validateParams";
-import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
-import { auth } from "../../middlewares/auth";
-import validateQuery from "../../middlewares/validateQuery";
+import express from 'express';
+import { CategoryControllers } from './category.controller';
+import { CategoryValidations } from './category.validation';
+import validateRequest from '../../middlewares/validateRequest';
+import validateParams from '../../middlewares/validateParams';
+import { idParamValidationSchema } from '../../validations';
+import { auth } from '../../middlewares/auth';
 
 const router = express.Router();
 
@@ -13,27 +12,21 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Category
- *   description: Category operations (Admin)
+ *   description: Category operations
  */
 
 /**
  * @swagger
- * /api/admin/categories:
+ * /api/categories:
  *   get:
- *     summary: Get all categories
+ *     summary: Get all categories (public)
+ *     description: Returns all service categories with service counts. No authentication required.
  *     tags: [Category]
- *     security:
- *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: List of categories
+ *         description: List of categories with service counts
  */
-router.get(
-  "/",
-  auth("ADMIN"),
-  validateQuery(paginationQuerySchema),
-  CategoryControllers.getAllCategoriesAdmin,
-);
+router.get('/', CategoryControllers.getAllCategoriesPublic);
 
 /**
  * @swagger
@@ -54,21 +47,19 @@ router.get(
  *             properties:
  *               name:
  *                 type: string
- *                 description: Category name (min 1 char)
  *                 example: Plumbing
  *               description:
  *                 type: string
- *                 description: Category description (optional)
  *                 example: Plumbing repair and installation services
  *     responses:
  *       201:
  *         description: Category created
  */
 router.post(
-  "/",
-  auth("ADMIN"),
+  '/',
+  auth('ADMIN'),
   validateRequest(CategoryValidations.createCategoryValidationSchema),
-  CategoryControllers.createCategory,
+  CategoryControllers.createCategory
 );
 
 /**
@@ -85,31 +76,16 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: Category name (min 1 char)
- *                 example: Plumbing
- *               description:
- *                 type: string
- *                 description: Category description
- *                 example: Plumbing repair and installation services
  *     responses:
  *       200:
  *         description: Category updated
  */
 router.patch(
-  "/:id",
-  auth("ADMIN"),
+  '/:id',
+  auth('ADMIN'),
   validateParams(idParamValidationSchema),
   validateRequest(CategoryValidations.updateCategoryValidationSchema),
-  CategoryControllers.updateCategory,
+  CategoryControllers.updateCategory
 );
 
 /**
@@ -131,10 +107,10 @@ router.patch(
  *         description: Category deleted
  */
 router.delete(
-  "/:id",
-  auth("ADMIN"),
+  '/:id',
+  auth('ADMIN'),
   validateParams(idParamValidationSchema),
-  CategoryControllers.deleteCategory,
+  CategoryControllers.deleteCategory
 );
 
 export const CategoryRoutes = router;
