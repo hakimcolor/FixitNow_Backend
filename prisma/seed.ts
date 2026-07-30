@@ -65,7 +65,9 @@ async function main() {
     location: 'Dhaka, Bangladesh',
     totalReviews: 0,
     averageRating: 0,
-    availability: { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
+    availability: {
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    },
     isVerified: true,
   };
   const technicianProfile = await prisma.technicianProfile.upsert({

@@ -13,4 +13,5 @@ model User {
   reviews           Review[]
 
   @@index([status])
+  @@map("user")
 }
