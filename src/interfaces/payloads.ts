@@ -1,4 +1,4 @@
-import type { Role } from '../../generated/prisma/client';
+import type { Role } from "../../generated/prisma/client";
 
 export type PaginationQuery = {
   page?: string;
@@ -14,7 +14,7 @@ export type PaginationMeta = {
   totalPage: number;
 };
 
-export type SortOrder = 'asc' | 'desc';
+export type SortOrder = "asc" | "desc";
 
 export type JwtPayload = {
   id: string;

@@ -1,14 +1,11 @@
-import express from 'express';
-import { BookingControllers } from './booking.controller';
-import { BookingValidations } from './booking.validation';
-import validateRequest from '../../middlewares/validateRequest';
-import validateParams from '../../middlewares/validateParams';
-import {
-  idParamValidationSchema,
-  paginationQuerySchema,
-} from '../../validations';
-import { auth } from '../../middlewares/auth';
-import validateQuery from '../../middlewares/validateQuery';
+import express from "express";
+import { BookingControllers } from "./booking.controller";
+import { BookingValidations } from "./booking.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import validateParams from "../../middlewares/validateParams";
+import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
+import { auth } from "../../middlewares/auth";
+import validateQuery from "../../middlewares/validateQuery";
 
 const router = express.Router();
 
@@ -52,10 +49,10 @@ const router = express.Router();
  *         description: Booking created
  */
 router.post(
-  '/',
-  auth('CUSTOMER'),
+  "/",
+  auth("CUSTOMER"),
   validateRequest(BookingValidations.createBookingValidationSchema),
-  BookingControllers.createBooking
+  BookingControllers.createBooking,
 );
 
 /**
@@ -71,10 +68,10 @@ router.post(
  *         description: List of bookings
  */
 router.get(
-  '/',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  "/",
+  auth("CUSTOMER", "TECHNICIAN", "ADMIN"),
   validateQuery(paginationQuerySchema),
-  BookingControllers.getAllBookings
+  BookingControllers.getAllBookings,
 );
 
 /**
@@ -96,10 +93,10 @@ router.get(
  *         description: Booking details
  */
 router.get(
-  '/:id',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  "/:id",
+  auth("CUSTOMER", "TECHNICIAN", "ADMIN"),
   validateParams(idParamValidationSchema),
-  BookingControllers.getBookingById
+  BookingControllers.getBookingById,
 );
 
 /**
@@ -316,11 +313,11 @@ router.get(
  *                       message: "Booking not found!"
  */
 router.patch(
-  '/:id/cancel',
-  auth('CUSTOMER'),
+  "/:id/cancel",
+  auth("CUSTOMER"),
   validateParams(idParamValidationSchema),
   validateRequest(BookingValidations.cancelBookingValidationSchema),
-  BookingControllers.cancelBooking
+  BookingControllers.cancelBooking,
 );
 
 export const BookingRoutes = router;

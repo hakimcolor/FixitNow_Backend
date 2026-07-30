@@ -1,9 +1,8 @@
-import express from 'express';
-import { AuthControllers } from './auth.controller';
-import { AuthValidations } from './auth.validation';
-
-import validateRequest from '../../middlewares/validateRequest';
-import { auth } from '../../middlewares/auth';
+import express from "express";
+import { AuthControllers } from "./auth.controller";
+import { AuthValidations } from "./auth.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import { auth } from "../../middlewares/auth";
 
 const router = express.Router();
 
@@ -80,9 +79,9 @@ const router = express.Router();
  *         description: Email already exists
  */
 router.post(
-  '/register',
+  "/register",
   validateRequest(AuthValidations.registerValidationSchema),
-  AuthControllers.registerUser
+  AuthControllers.registerUser,
 );
 
 /**
@@ -139,9 +138,9 @@ router.post(
  *         description: User not found
  */
 router.post(
-  '/login',
+  "/login",
   validateRequest(AuthValidations.loginValidationSchema),
-  AuthControllers.loginUser
+  AuthControllers.loginUser,
 );
 
 /**
@@ -173,11 +172,7 @@ router.post(
  *       404:
  *         description: User not found
  */
-router.get(
-  '/me',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
-  AuthControllers.getMe
-);
+router.get("/me", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.getMe);
 
 /**
  * @swagger
@@ -245,8 +240,8 @@ router.get(
  *         description: Email is already taken
  */
 router.patch(
-  '/me',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  "/me",
+  auth("CUSTOMER", "TECHNICIAN", "ADMIN"),
   validateRequest(AuthValidations.updateProfileValidationSchema),
   AuthControllers.updateProfile
 );
@@ -275,11 +270,7 @@ router.patch(
  *       404:
  *         description: User not found
  */
-router.delete(
-  '/me',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
-  AuthControllers.deleteProfile
-);
+router.delete("/me", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.deleteProfile);
 
 /**
  * @swagger
@@ -307,11 +298,7 @@ router.delete(
  *               message: "Logged out successfully"
  *               data: null
  */
-router.post(
-  '/logout',
-  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
-  AuthControllers.logout
-);
+router.post("/logout", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.logout);
 
 /**
  * @swagger
@@ -346,6 +333,6 @@ router.post(
  *       404:
  *         description: User not found
  */
-router.post('/refresh', AuthControllers.refreshToken);
+router.post("/refresh", AuthControllers.refreshToken);
 
 export const AuthRoutes = router;

@@ -1,43 +1,43 @@
-import { NextFunction, Request, Response } from 'express';
-import { ZodError } from 'zod';
-import { Prisma } from '../../generated/prisma/client';
-import config from '../config';
-import AppError from '../utils/AppError';
+import { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
+import { Prisma } from "../../generated/prisma/client";
+import AppError from "../utils/AppError";
+import config from "../config";
 
 type TErrorSource = { path: string; message: string };
 
 const handleZodError = (err: ZodError) => {
   const errorSources: TErrorSource[] = err.issues.map((issue) => ({
-    path: issue.path.join('.'),
+    path: issue.path.join("."),
     message: issue.message,
   }));
-  return { statusCode: 400, message: 'Validation error', errorSources };
+  return { statusCode: 400, message: "Validation error", errorSources };
 };
 
 const handlePrismaError = (err: Prisma.PrismaClientKnownRequestError) => {
   let statusCode = 500;
-  let message = 'Database error';
+  let message = "Database error";
   const errorSources: TErrorSource[] = [];
 
   switch (err.code) {
-    case 'P2002': {
+    case "P2002": {
       statusCode = 409;
       const metaTarget = err.meta?.target;
-      const target = Array.isArray(metaTarget) ? metaTarget[0] : '';
-      const field = target || 'field';
+      const target = Array.isArray(metaTarget) ? metaTarget[0] : "";
+      const field = target || "field";
       message = `A record with this ${field} already exists`;
       errorSources.push({ path: field, message });
       break;
     }
-    case 'P2025': {
+    case "P2025": {
       statusCode = 404;
       const metaCause = err.meta?.cause;
-      message = typeof metaCause === 'string' ? metaCause : 'Record not found';
-      errorSources.push({ path: '', message });
+      message = typeof metaCause === "string" ? metaCause : "Record not found";
+      errorSources.push({ path: "", message });
       break;
     }
     default:
-      errorSources.push({ path: '', message: err.message });
+      errorSources.push({ path: "", message: err.message });
   }
 
   return { statusCode, message, errorSources };
@@ -50,11 +50,11 @@ const globalErrorHandler = (
   _next: NextFunction
 ) => {
   let statusCode = 500;
-  let message = 'Internal server error';
+  let message = "Internal server error";
   let errorSources: TErrorSource[] = [
     {
-      path: '',
-      message: err instanceof Error ? err.message : 'Something went wrong',
+      path: "",
+      message: err instanceof Error ? err.message : "Something went wrong",
     },
   ];
 
@@ -65,14 +65,14 @@ const globalErrorHandler = (
   } else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
-    errorSources = [{ path: '', message: err.message }];
+    errorSources = [{ path: "", message: err.message }];
   } else if (err instanceof Error) {
     message = err.message;
-    errorSources = [{ path: '', message: err.message }];
+    errorSources = [{ path: "", message: err.message }];
   }
 
   let stack: string | undefined;
-  if (config.nodeEnv === 'development' && err instanceof Error) {
+  if (config.nodeEnv === "development" && err instanceof Error) {
     stack = err.stack;
   }
 

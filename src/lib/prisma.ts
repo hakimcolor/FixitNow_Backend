@@ -1,43 +1,38 @@
-import 'dotenv/config';
-import https from 'https';
-import { neonConfig } from '@neondatabase/serverless';
-import { PrismaNeonHttp } from '@prisma/adapter-neon';
-import { PrismaClient } from '../../generated/prisma/client';
+import "dotenv/config";
+import https from "https";
+import { neonConfig } from "@neondatabase/serverless";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
+import { PrismaClient } from "../../generated/prisma/client";
 
 // Configure Neon serverless to force IPv4 connections over HTTPS (port 443)
 // to prevent IPv6 routing timeouts and bypass local port 5432 firewall blocks.
-neonConfig.fetchFunction = function (
-  url: string | URL,
-  options: Record<string, any> = {}
-) {
+neonConfig.fetchFunction = function (url: string | URL, options: Record<string, any> = {}) {
   return new Promise((resolve, reject) => {
-    const parsedUrl = typeof url === 'string' ? new URL(url) : url;
+    const parsedUrl = typeof url === "string" ? new URL(url) : url;
     const reqOptions: https.RequestOptions = {
       hostname: parsedUrl.hostname,
       port: parsedUrl.port || 443,
       path: parsedUrl.pathname + parsedUrl.search,
-      method: options.method || 'POST',
+      method: options.method || "POST",
       headers: options.headers || {},
       family: 4,
     };
 
     const req = https.request(reqOptions, (res) => {
-      let data = '';
-      res.on('data', (chunk) => (data += chunk));
-      res.on('end', () => {
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => {
         resolve({
-          ok: res.statusCode
-            ? res.statusCode >= 200 && res.statusCode < 300
-            : false,
+          ok: res.statusCode ? res.statusCode >= 200 && res.statusCode < 300 : false,
           status: res.statusCode || 500,
-          statusText: res.statusMessage || '',
+          statusText: res.statusMessage || "",
           json: () => Promise.resolve(data ? JSON.parse(data) : null),
           text: () => Promise.resolve(data),
         } as any);
       });
     });
 
-    req.on('error', reject);
+    req.on("error", reject);
     if (options.body) req.write(options.body);
     req.end();
   });

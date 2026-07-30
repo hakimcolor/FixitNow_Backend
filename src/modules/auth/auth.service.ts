@@ -1,10 +1,11 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { prisma } from '../../lib/prisma';
-import config from '../../config';
-import type { TRegisterPayload, TLoginPayload } from './auth.validation';
-import AppError from '../../utils/AppError';
-import { JwtPayload } from '../../interfaces/payloads';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { prisma } from "../../lib/prisma";
+import AppError from "../../utils/AppError";
+import config from "../../config";
+import { Prisma } from "../../../generated/prisma/client";
+import type { JwtPayload } from "../../interfaces/payloads";
+import type { TRegisterPayload, TLoginPayload } from "./auth.validation";
 
 const registerUser = async (payload: TRegisterPayload) => {
   const isUserExists = await prisma.user.findUnique({
@@ -12,7 +13,7 @@ const registerUser = async (payload: TRegisterPayload) => {
   });
 
   if (isUserExists) {
-    throw new AppError(409, 'User already exists with this email!');
+    throw new AppError(409, "User already exists with this email!");
   }
 
   const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -26,13 +27,13 @@ const registerUser = async (payload: TRegisterPayload) => {
     },
   });
 
-  if (payload.role === 'TECHNICIAN') {
-    await prisma.technicianProfil.create({
+  if (payload.role === "TECHNICIAN") {
+    await prisma.technicianProfile.create({
       data: {
         userId: newUser.id,
         experience: 0,
         hourlyRate: 0,
-        location: '',
+        location: "",
         availability: {},
       },
     });
@@ -41,7 +42,7 @@ const registerUser = async (payload: TRegisterPayload) => {
   return prisma.user.findUnique({
     where: { id: newUser.id },
     omit: { password: true },
-    include: { technicianProfile: payload.role === 'TECHNICIAN' },
+    include: { technicianProfile: payload.role === "TECHNICIAN" },
   });
 };
 
@@ -51,11 +52,11 @@ const loginUser = async (payload: TLoginPayload) => {
   });
 
   if (!user) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
-  if (user.status === 'BANNED') {
-    throw new AppError(403, 'This user account has been banned!');
+  if (user.status === "BANNED") {
+    throw new AppError(403, "This user account has been banned!");
   }
 
   const isPasswordMatched = await bcrypt.compare(
@@ -63,14 +64,10 @@ const loginUser = async (payload: TLoginPayload) => {
     user.password
   );
   if (!isPasswordMatched) {
-    throw new AppError(401, 'Invalid password!');
+    throw new AppError(401, "Invalid password!");
   }
 
-  const jwtPayload: JwtPayload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  };
+  const jwtPayload: JwtPayload = { id: user.id, email: user.email, role: user.role };
 
   const accessToken = jwt.sign(jwtPayload, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
@@ -95,7 +92,7 @@ const getMe = async (userId: string) => {
   });
 
   if (!result) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
   return result;
@@ -107,7 +104,7 @@ const refreshToken = async (token: string) => {
   try {
     decoded = jwt.verify(token, config.jwt.refreshSecret) as jwt.JwtPayload;
   } catch {
-    throw new AppError(401, 'Invalid or expired refresh token!');
+    throw new AppError(401, "Invalid or expired refresh token!");
   }
 
   const user = await prisma.user.findUnique({
@@ -115,45 +112,42 @@ const refreshToken = async (token: string) => {
   });
 
   if (!user) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
-  if (user.status === 'BANNED') {
-    throw new AppError(403, 'This user account has been banned!');
+  if (user.status === "BANNED") {
+    throw new AppError(403, "This user account has been banned!");
   }
 
-  const jwtPayload: JwtPayload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  };
+  const jwtPayload: JwtPayload = { id: user.id, email: user.email, role: user.role };
 
-  const newAccessToken = jwt.sign(jwtPayload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn,
-  } as jwt.SignOptions);
+  const newAccessToken = jwt.sign(
+    jwtPayload,
+    config.jwt.secret,
+    { expiresIn: config.jwt.expiresIn } as jwt.SignOptions
+  );
 
-  const newRefreshToken = jwt.sign(jwtPayload, config.jwt.refreshSecret, {
-    expiresIn: config.jwt.refreshExpiresIn,
-  } as jwt.SignOptions);
+  const newRefreshToken = jwt.sign(
+    jwtPayload,
+    config.jwt.refreshSecret,
+    { expiresIn: config.jwt.refreshExpiresIn } as jwt.SignOptions
+  );
 
   return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
-const updateProfile = async (
-  userId: string,
-  payload: import('./auth.validation').TUpdateProfilePayload
-) => {
+const updateProfile = async (userId: string, payload: import("./auth.validation").TUpdateProfilePayload) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: { technicianProfile: true },
   });
 
   if (!user) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
-  if (user.status === 'BANNED') {
-    throw new AppError(403, 'This user account has been banned!');
+  if (user.status === "BANNED") {
+    throw new AppError(403, "This user account has been banned!");
   }
 
   if (payload.email && payload.email !== user.email) {
@@ -161,7 +155,7 @@ const updateProfile = async (
       where: { email: payload.email },
     });
     if (existingUser) {
-      throw new AppError(409, 'Email is already taken by another account!');
+      throw new AppError(409, "Email is already taken by another account!");
     }
   }
 
@@ -187,7 +181,7 @@ const updateProfile = async (
     });
   }
 
-  if (hasTechnicianData && user.role === 'TECHNICIAN') {
+  if (hasTechnicianData && user.role === "TECHNICIAN") {
     const techDataToUpdate: Record<string, any> = {};
     if (bio !== undefined) techDataToUpdate.bio = bio;
     if (skills !== undefined) techDataToUpdate.skills = skills;
@@ -199,11 +193,11 @@ const updateProfile = async (
       where: { userId },
       create: {
         userId,
-        bio: bio || '',
+        bio: bio || "",
         skills: skills || [],
         experience: experience || 0,
         hourlyRate: hourlyRate || 0,
-        location: location || '',
+        location: location || "",
       },
       update: techDataToUpdate,
     });
@@ -222,7 +216,7 @@ const deleteProfile = async (userId: string) => {
   });
 
   if (!user) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
   await prisma.user.delete({

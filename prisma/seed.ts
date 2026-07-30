@@ -27,7 +27,7 @@ async function main() {
     role: 'ADMIN' as const,
     status: 'ACTIVE' as const,
   };
-  await prisma.uses.upsert({
+  await prisma.user.upsert({
     where: { email: 'admin@gmail.com' },
     update: adminData,
     create: { email: 'admin@gmail.com', ...adminData },
@@ -65,9 +65,7 @@ async function main() {
     location: 'Dhaka, Bangladesh',
     totalReviews: 0,
     averageRating: 0,
-    availability: {
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    },
+    availability: { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
     isVerified: true,
   };
   const technicianProfile = await prisma.technicianProfile.upsert({

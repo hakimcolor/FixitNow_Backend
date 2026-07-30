@@ -1,14 +1,14 @@
-import { Request, Response } from 'express';
-import { AdminServices } from './admin.service';
-import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
+import { Request, Response } from "express";
+import { AdminServices } from "./admin.service";
+import sendResponse from "../../utils/sendResponse";
+import catchAsync from "../../utils/catchAsync";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const { data, meta } = await AdminServices.getAllUsers(req.query);
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Users retrieved successfully!',
+    message: "Users retrieved successfully!",
     meta,
     data,
   });
@@ -22,7 +22,7 @@ const toggleUserStatus = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'User status updated successfully!',
+    message: "User status updated successfully!",
     data: result,
   });
 });
@@ -32,7 +32,7 @@ const getAllBookings = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Bookings retrieved successfully!',
+    message: "Bookings retrieved successfully!",
     meta,
     data,
   });
@@ -43,7 +43,7 @@ const getBookingById = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Booking retrieved successfully!',
+    message: "Booking retrieved successfully!",
     data: result,
   });
 });
@@ -53,7 +53,7 @@ const getAllPayments = catchAsync(async (_req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Payments retrieved successfully!',
+    message: "Payments retrieved successfully!",
     data: result,
   });
 });
@@ -63,7 +63,7 @@ const getPaymentById = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Payment retrieved successfully!',
+    message: "Payment retrieved successfully!",
     data: result,
   });
 });

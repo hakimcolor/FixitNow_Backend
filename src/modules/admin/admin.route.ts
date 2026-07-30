@@ -1,12 +1,11 @@
-import express from 'express';
-import { AdminControllers } from './admin.controller';
-import { AdminValidations } from './admin.validation';
-import { auth } from '../../middlewares/auth';
-import validateQuery from '../../middlewares/validateQuery';
-import { idParamValidationSchema, paginationQuerySchema } from '../../validations';
-import validateParams from '../../middlewares/validateParams';
-import validateRequest from '../../middlewares/validateRequest';
-
+import express from "express";
+import { AdminControllers } from "./admin.controller";
+import { AdminValidations } from "./admin.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import validateParams from "../../middlewares/validateParams";
+import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
+import { auth } from "../../middlewares/auth";
+import validateQuery from "../../middlewares/validateQuery";
 
 const router = express.Router();
 
@@ -30,10 +29,10 @@ const router = express.Router();
  *         description: List of users
  */
 router.get(
-  '/users',
-  auth('ADMIN'),
+  "/users",
+  auth("ADMIN"),
   validateQuery(paginationQuerySchema),
-  AdminControllers.getAllUsers
+  AdminControllers.getAllUsers,
 );
 
 /**
@@ -67,11 +66,11 @@ router.get(
  *         description: User status updated
  */
 router.patch(
-  '/users/:id',
-  auth('ADMIN'),
+  "/users/:id",
+  auth("ADMIN"),
   validateParams(idParamValidationSchema),
   validateRequest(AdminValidations.toggleUserStatusValidationSchema),
-  AdminControllers.toggleUserStatus
+  AdminControllers.toggleUserStatus,
 );
 
 /**
@@ -103,10 +102,10 @@ router.patch(
  *         description: List of bookings
  */
 router.get(
-  '/bookings',
-  auth('ADMIN'),
+  "/bookings",
+  auth("ADMIN"),
   validateQuery(paginationQuerySchema),
-  AdminControllers.getAllBookings
+  AdminControllers.getAllBookings,
 );
 
 /**
@@ -128,10 +127,10 @@ router.get(
  *         description: Booking details retrieved
  */
 router.get(
-  '/bookings/:id',
-  auth('ADMIN'),
+  "/bookings/:id",
+  auth("ADMIN"),
   validateParams(idParamValidationSchema),
-  AdminControllers.getBookingById
+  AdminControllers.getBookingById,
 );
 
 /**
@@ -147,10 +146,10 @@ router.get(
  *         description: List of payments
  */
 router.get(
-  '/payments',
-  auth('ADMIN'),
+  "/payments",
+  auth("ADMIN"),
   validateQuery(paginationQuerySchema),
-  AdminControllers.getAllPayments
+  AdminControllers.getAllPayments,
 );
 
 /**
@@ -172,10 +171,10 @@ router.get(
  *         description: Payment details retrieved
  */
 router.get(
-  '/payments/:id',
-  auth('ADMIN'),
+  "/payments/:id",
+  auth("ADMIN"),
   validateParams(idParamValidationSchema),
-  AdminControllers.getPaymentById
+  AdminControllers.getPaymentById,
 );
 
 export const AdminRoutes = router;

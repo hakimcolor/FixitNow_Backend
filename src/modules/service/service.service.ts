@@ -1,12 +1,9 @@
-import { prisma } from '../../lib/prisma';
-import AppError from '../../utils/AppError';
-import { parsePagination, buildMeta } from '../../utils/pagination';
-import { Prisma } from '../../../generated/prisma/client';
-import type { PaginationQuery } from '../../interfaces/payloads';
-import type {
-  TCreateServicePayload,
-  TUpdateServicePayload,
-} from './service.validation';
+import { prisma } from "../../lib/prisma";
+import AppError from "../../utils/AppError";
+import { parsePagination, buildMeta } from "../../utils/pagination";
+import { Prisma } from "../../../generated/prisma/client";
+import type { PaginationQuery } from "../../interfaces/payloads";
+import type { TCreateServicePayload, TUpdateServicePayload } from "./service.validation";
 
 type ServiceQuery = PaginationQuery & {
   search?: string;
@@ -21,8 +18,8 @@ const getAllServices = async (query: ServiceQuery) => {
 
   if (query.search) {
     where.OR = [
-      { title: { contains: query.search, mode: 'insensitive' } },
-      { description: { contains: query.search, mode: 'insensitive' } },
+      { title: { contains: query.search, mode: "insensitive" } },
+      { description: { contains: query.search, mode: "insensitive" } },
     ];
   }
 
@@ -41,9 +38,7 @@ const getAllServices = async (query: ServiceQuery) => {
       where,
       skip,
       take,
-      orderBy: {
-        [sortBy]: sortOrder,
-      } as Prisma.ServiceOrderByWithRelationInput,
+      orderBy: { [sortBy]: sortOrder } as Prisma.ServiceOrderByWithRelationInput,
       include: {
         category: true,
         technicianProfile: {
@@ -75,7 +70,7 @@ const getServiceById = async (id: string) => {
   });
 
   if (!result) {
-    throw new AppError(404, 'Service not found!');
+    throw new AppError(404, "Service not found!");
   }
 
   return result;
@@ -90,7 +85,7 @@ const createService = async (
   });
 
   if (!technicianProfile) {
-    throw new AppError(404, 'Technician profile not found!');
+    throw new AppError(404, "Technician profile not found!");
   }
 
   const category = await prisma.category.findUnique({
@@ -98,7 +93,7 @@ const createService = async (
   });
 
   if (!category) {
-    throw new AppError(404, 'Category not found!');
+    throw new AppError(404, "Category not found!");
   }
 
   const result = await prisma.service.create({
@@ -133,18 +128,15 @@ const updateService = async (
   });
 
   if (!service) {
-    throw new AppError(404, 'Service not found!');
+    throw new AppError(404, "Service not found!");
   }
 
   const technicianProfile = await prisma.technicianProfile.findUnique({
     where: { userId },
   });
 
-  if (
-    !technicianProfile ||
-    service.technicianProfileId !== technicianProfile.id
-  ) {
-    throw new AppError(403, 'You are not authorized to update this service!');
+  if (!technicianProfile || service.technicianProfileId !== technicianProfile.id) {
+    throw new AppError(403, "You are not authorized to update this service!");
   }
 
   if (payload.categoryId) {
@@ -153,7 +145,7 @@ const updateService = async (
     });
 
     if (!category) {
-      throw new AppError(404, 'Category not found!');
+      throw new AppError(404, "Category not found!");
     }
   }
 
@@ -180,18 +172,15 @@ const deleteService = async (serviceId: string, userId: string) => {
   });
 
   if (!service) {
-    throw new AppError(404, 'Service not found!');
+    throw new AppError(404, "Service not found!");
   }
 
   const technicianProfile = await prisma.technicianProfile.findUnique({
     where: { userId },
   });
 
-  if (
-    !technicianProfile ||
-    service.technicianProfileId !== technicianProfile.id
-  ) {
-    throw new AppError(403, 'You are not authorized to delete this service!');
+  if (!technicianProfile || service.technicianProfileId !== technicianProfile.id) {
+    throw new AppError(403, "You are not authorized to delete this service!");
   }
 
   const result = await prisma.service.delete({
@@ -202,12 +191,12 @@ const deleteService = async (serviceId: string, userId: string) => {
 };
 
 const getAllCategories = async (query: { sortBy?: string }) => {
-  let orderBy: Prisma.CategoryOrderByWithRelationInput = { createdAt: 'desc' };
+  let orderBy: Prisma.CategoryOrderByWithRelationInput = { createdAt: "desc" };
 
-  if (query.sortBy === 'name') {
-    orderBy = { name: 'asc' };
-  } else if (query.sortBy === 'createdAt') {
-    orderBy = { createdAt: 'desc' };
+  if (query.sortBy === "name") {
+    orderBy = { name: "asc" };
+  } else if (query.sortBy === "createdAt") {
+    orderBy = { createdAt: "desc" };
   }
 
   const result = await prisma.category.findMany({

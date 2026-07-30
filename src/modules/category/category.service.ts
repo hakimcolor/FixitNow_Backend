@@ -1,14 +1,14 @@
-import { prisma } from '../../lib/prisma';
-import AppError from '../../utils/AppError';
+import { prisma } from "../../lib/prisma";
+import AppError from "../../utils/AppError";
 import type {
   TCreateCategoryPayload,
   TUpdateCategoryPayload,
-} from './category.validation';
+} from "./category.validation";
 
 const getAllCategoriesAdmin = async () => {
   const result = await prisma.category.findMany({
     include: { _count: { select: { services: true } } },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 
   return result;
@@ -20,7 +20,7 @@ const createCategory = async (payload: TCreateCategoryPayload) => {
   });
 
   if (existing) {
-    throw new AppError(409, 'Category with this name already exists!');
+    throw new AppError(409, "Category with this name already exists!");
   }
 
   const result = await prisma.category.create({
@@ -39,7 +39,7 @@ const updateCategory = async (
   });
 
   if (!category) {
-    throw new AppError(404, 'Category not found!');
+    throw new AppError(404, "Category not found!");
   }
 
   if (payload.name && payload.name !== category.name) {
@@ -48,7 +48,7 @@ const updateCategory = async (
     });
 
     if (existing) {
-      throw new AppError(409, 'Category with this name already exists!');
+      throw new AppError(409, "Category with this name already exists!");
     }
   }
 
@@ -68,13 +68,13 @@ const deleteCategory = async (categoryId: string) => {
   });
 
   if (!category) {
-    throw new AppError(404, 'Category not found!');
+    throw new AppError(404, "Category not found!");
   }
 
   if (category._count.services > 0) {
     throw new AppError(
       400,
-      'Cannot delete a category that has services assigned to it!'
+      "Cannot delete a category that has services assigned to it!"
     );
   }
 

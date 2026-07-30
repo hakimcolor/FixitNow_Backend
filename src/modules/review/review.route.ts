@@ -1,8 +1,8 @@
-import express from 'express';
-import { ReviewControllers } from './review.controller';
-import { ReviewValidations } from './review.validation';
-import validateRequest from '../../middlewares/validateRequest';
-import { auth } from '../../middlewares/auth';
+import express from "express";
+import { ReviewControllers } from "./review.controller";
+import { ReviewValidations } from "./review.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import { auth } from "../../middlewares/auth";
 
 const router = express.Router();
 
@@ -42,8 +42,8 @@ const router = express.Router();
  *         description: Review created
  */
 router.post(
-  '/',
-  auth('CUSTOMER'),
+  "/",
+  auth("CUSTOMER"),
   validateRequest(ReviewValidations.createReviewValidationSchema),
   ReviewControllers.createReview
 );

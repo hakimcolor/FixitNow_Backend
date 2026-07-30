@@ -1,8 +1,8 @@
-import { prisma } from '../../lib/prisma';
-import AppError from '../../utils/AppError';
-import { parsePagination, buildMeta } from '../../utils/pagination';
-import { Prisma, Status } from '../../../generated/prisma/client';
-import type { PaginationQuery } from '../../interfaces/payloads';
+import { prisma } from "../../lib/prisma";
+import AppError from "../../utils/AppError";
+import { parsePagination, buildMeta } from "../../utils/pagination";
+import { Prisma, Status } from "../../../generated/prisma/client";
+import type { PaginationQuery } from "../../interfaces/payloads";
 
 const getAllUsers = async (query: PaginationQuery) => {
   const { page, limit, skip, take, sortBy, sortOrder } = parsePagination(query);
@@ -25,7 +25,7 @@ const toggleUserStatus = async (userId: string, status: Status) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!user) {
-    throw new AppError(404, 'User not found!');
+    throw new AppError(404, "User not found!");
   }
 
   const result = await prisma.user.update({
@@ -44,9 +44,7 @@ const getAllBookings = async (query: PaginationQuery) => {
     prisma.booking.findMany({
       skip,
       take,
-      orderBy: {
-        [sortBy]: sortOrder,
-      } as Prisma.BookingOrderByWithRelationInput,
+      orderBy: { [sortBy]: sortOrder } as Prisma.BookingOrderByWithRelationInput,
       include: {
         service: true,
         customer: { select: { name: true, email: true } },
@@ -72,7 +70,7 @@ const getBookingById = async (bookingId: string) => {
   });
 
   if (!result) {
-    throw new AppError(404, 'Booking not found!');
+    throw new AppError(404, "Booking not found!");
   }
 
   return result;
@@ -88,7 +86,7 @@ const getAllPayments = async () => {
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 
   return result;
@@ -108,7 +106,7 @@ const getPaymentById = async (paymentId: string) => {
   });
 
   if (!result) {
-    throw new AppError(404, 'Payment not found!');
+    throw new AppError(404, "Payment not found!");
   }
 
   return result;

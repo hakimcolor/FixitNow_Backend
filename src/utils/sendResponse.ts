@@ -1,5 +1,5 @@
-import { Response } from 'express';
-import type { PaginationMeta } from '../interfaces/payloads';
+import { Response } from "express";
+import type { PaginationMeta } from "../interfaces/payloads";
 
 type TSendResponse<T> = {
   statusCode: number;

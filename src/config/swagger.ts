@@ -1,26 +1,26 @@
-import swaggerJsdoc from 'swagger-jsdoc';
-import config from './index';
+import swaggerJsdoc from "swagger-jsdoc";
+import config from "./index";
 
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'FixItNow API',
-      version: '1.0.0',
-      description: 'API documentation for FixItNow',
+      title: "FixItNow API",
+      version: "1.0.0",
+      description: "API documentation for FixItNow",
     },
     servers: [
       {
         url: config.backendUrl || `http://localhost:${config.port}`,
-        description: 'API Server',
+        description: "API Server",
       },
     ],
     components: {
       securitySchemes: {
         cookieAuth: {
-          type: 'apiKey',
-          in: 'cookie',
-          name: 'accessToken',
+          type: "apiKey",
+          in: "cookie",
+          name: "accessToken",
         },
       },
     },
@@ -30,7 +30,7 @@ const options = {
       },
     ],
   },
-  apis: ['./src/modules/**/*.route.ts', './src/app.ts'],
+  apis: ["./src/modules/**/*.route.ts", "./src/app.ts"],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

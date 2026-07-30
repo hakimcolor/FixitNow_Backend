@@ -1,14 +1,11 @@
-import express from 'express';
-import { PaymentControllers } from './payment.controller';
-import { PaymentValidations } from './payment.validation';
-import validateRequest from '../../middlewares/validateRequest';
-import validateParams from '../../middlewares/validateParams';
-import {
-  idParamValidationSchema,
-  paginationQuerySchema,
-} from '../../validations';
-import { auth } from '../../middlewares/auth';
-import validateQuery from '../../middlewares/validateQuery';
+import express from "express";
+import { PaymentControllers } from "./payment.controller";
+import { PaymentValidations } from "./payment.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import validateParams from "../../middlewares/validateParams";
+import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
+import { auth } from "../../middlewares/auth";
+import validateQuery from "../../middlewares/validateQuery";
 
 const router = express.Router();
 
@@ -75,10 +72,10 @@ const router = express.Router();
  *         description: Booking not found
  */
 router.post(
-  '/checkout',
-  auth('CUSTOMER'),
+  "/checkout",
+  auth("CUSTOMER"),
   validateRequest(PaymentValidations.createCheckoutSessionValidationSchema),
-  PaymentControllers.createCheckoutSession
+  PaymentControllers.createCheckoutSession,
 );
 
 /**
@@ -94,10 +91,10 @@ router.post(
  *         description: Payment history retrieved
  */
 router.get(
-  '/',
-  auth('CUSTOMER', 'ADMIN'),
+  "/",
+  auth("CUSTOMER", "ADMIN"),
   validateQuery(paginationQuerySchema),
-  PaymentControllers.getUserPaymentHistory
+  PaymentControllers.getUserPaymentHistory,
 );
 
 /**
@@ -119,10 +116,10 @@ router.get(
  *         description: Payment details
  */
 router.get(
-  '/:id',
-  auth('CUSTOMER', 'ADMIN'),
+  "/:id",
+  auth("CUSTOMER", "ADMIN"),
   validateParams(idParamValidationSchema),
-  PaymentControllers.getPaymentById
+  PaymentControllers.getPaymentById,
 );
 
 export const PaymentRoutes = router;

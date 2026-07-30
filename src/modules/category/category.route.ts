@@ -1,14 +1,11 @@
-import express from 'express';
-import { CategoryControllers } from './category.controller';
-import { CategoryValidations } from './category.validation';
-import validateRequest from '../../middlewares/validateRequest';
-import validateParams from '../../middlewares/validateParams';
-import {
-  idParamValidationSchema,
-  paginationQuerySchema,
-} from '../../validations';
-import { auth } from '../../middlewares/auth';
-import validateQuery from '../../middlewares/validateQuery';
+import express from "express";
+import { CategoryControllers } from "./category.controller";
+import { CategoryValidations } from "./category.validation";
+import validateRequest from "../../middlewares/validateRequest";
+import validateParams from "../../middlewares/validateParams";
+import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
+import { auth } from "../../middlewares/auth";
+import validateQuery from "../../middlewares/validateQuery";
 
 const router = express.Router();
 
@@ -32,10 +29,10 @@ const router = express.Router();
  *         description: List of categories
  */
 router.get(
-  '/',
-  auth('ADMIN'),
+  "/",
+  auth("ADMIN"),
   validateQuery(paginationQuerySchema),
-  CategoryControllers.getAllCategoriesAdmin
+  CategoryControllers.getAllCategoriesAdmin,
 );
 
 /**
@@ -68,10 +65,10 @@ router.get(
  *         description: Category created
  */
 router.post(
-  '/',
-  auth('ADMIN'),
+  "/",
+  auth("ADMIN"),
   validateRequest(CategoryValidations.createCategoryValidationSchema),
-  CategoryControllers.createCategory
+  CategoryControllers.createCategory,
 );
 
 /**
@@ -108,11 +105,11 @@ router.post(
  *         description: Category updated
  */
 router.patch(
-  '/:id',
-  auth('ADMIN'),
+  "/:id",
+  auth("ADMIN"),
   validateParams(idParamValidationSchema),
   validateRequest(CategoryValidations.updateCategoryValidationSchema),
-  CategoryControllers.updateCategory
+  CategoryControllers.updateCategory,
 );
 
 /**
@@ -134,10 +131,10 @@ router.patch(
  *         description: Category deleted
  */
 router.delete(
-  '/:id',
-  auth('ADMIN'),
+  "/:id",
+  auth("ADMIN"),
   validateParams(idParamValidationSchema),
-  CategoryControllers.deleteCategory
+  CategoryControllers.deleteCategory,
 );
 
 export const CategoryRoutes = router;

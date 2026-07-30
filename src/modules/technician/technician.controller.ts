@@ -1,19 +1,17 @@
-import { Request, Response } from 'express';
-import { TechnicianServices } from './technician.service';
-import sendResponse from '../../utils/sendResponse';
-import catchAsync from '../../utils/catchAsync';
+import { Request, Response } from "express";
+import { TechnicianServices } from "./technician.service";
+import sendResponse from "../../utils/sendResponse";
+import catchAsync from "../../utils/catchAsync";
 
-const getTechnicianBookings = catchAsync(
-  async (req: Request, res: Response) => {
-    const result = await TechnicianServices.getTechnicianBookings(req.user!.id);
+const getTechnicianBookings = catchAsync(async (req: Request, res: Response) => {
+  const result = await TechnicianServices.getTechnicianBookings(req.user!.id);
 
-    sendResponse(res, {
-      statusCode: 200,
-      message: 'Technician bookings retrieved successfully!',
-      data: result,
-    });
-  }
-);
+  sendResponse(res, {
+    statusCode: 200,
+    message: "Technician bookings retrieved successfully!",
+    data: result,
+  });
+});
 
 const updateBookingStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await TechnicianServices.updateBookingStatus(
@@ -24,7 +22,7 @@ const updateBookingStatus = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Booking status updated successfully!',
+    message: "Booking status updated successfully!",
     data: result,
   });
 });
@@ -34,7 +32,7 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Profile updated successfully!',
+    message: "Profile updated successfully!",
     data: result,
   });
 });
@@ -47,7 +45,7 @@ const updateAvailability = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Availability updated successfully!',
+    message: "Availability updated successfully!",
     data: result,
   });
 });
@@ -57,20 +55,18 @@ const getAllTechnicians = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Technicians retrieved successfully!',
+    message: "Technicians retrieved successfully!",
     meta,
     data,
   });
 });
 
 const getTechnicianById = catchAsync(async (req: Request, res: Response) => {
-  const result = await TechnicianServices.getTechnicianById(
-    req.params.id as string
-  );
+  const result = await TechnicianServices.getTechnicianById(req.params.id as string);
 
   sendResponse(res, {
     statusCode: 200,
-    message: 'Technician retrieved successfully!',
+    message: "Technician retrieved successfully!",
     data: result,
   });
 });
