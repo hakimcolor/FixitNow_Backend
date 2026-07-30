@@ -1,11 +1,10 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../lib/prisma';
-import AppError from '../../utils/AppError';
 import config from '../../config';
-import { Prisma } from '../../../generated/prisma/client';
-import type { JwtPayload } from '../../interfaces/payloads';
 import type { TRegisterPayload, TLoginPayload } from './auth.validation';
+import AppError from '../../utils/AppError';
+import { JwtPayload } from '../../interfaces/payloads';
 
 const registerUser = async (payload: TRegisterPayload) => {
   const isUserExists = await prisma.user.findUnique({
@@ -28,7 +27,7 @@ const registerUser = async (payload: TRegisterPayload) => {
   });
 
   if (payload.role === 'TECHNICIAN') {
-    await prisma.technicianProfile.create({
+    await prisma.technicianProfil.create({
       data: {
         userId: newUser.id,
         experience: 0,

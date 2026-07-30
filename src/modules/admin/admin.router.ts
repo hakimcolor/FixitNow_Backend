@@ -1,14 +1,12 @@
 import express from 'express';
 import { AdminControllers } from './admin.controller';
 import { AdminValidations } from './admin.validation';
-import validateRequest from '../../middlewares/validateRequest';
-import validateParams from '../../middlewares/validateParams';
-import {
-  idParamValidationSchema,
-  paginationQuerySchema,
-} from '../../validations';
 import { auth } from '../../middlewares/auth';
 import validateQuery from '../../middlewares/validateQuery';
+import { idParamValidationSchema, paginationQuerySchema } from '../../validations';
+import validateParams from '../../middlewares/validateParams';
+import validateRequest from '../../middlewares/validateRequest';
+
 
 const router = express.Router();
 
