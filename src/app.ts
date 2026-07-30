@@ -51,6 +51,15 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Database is connected' });
 });
 
+app.get('/', (_req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to FixItNow API',
+    docs: '/api-docs',
+    health: '/api/health',
+  });
+});
+
 app.use('/api/auth', AuthRoutes);
 app.use('/api/services/technicians', TechnicianListingRoutes);
 app.use('/api/services', ServiceRoutes);
