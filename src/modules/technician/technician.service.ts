@@ -1,29 +1,43 @@
-import { prisma } from "../../lib/prisma";
-import AppError from "../../utils/AppError";
-import { parsePagination, buildMeta } from "../../utils/pagination";
-import { Prisma, BookingStatus } from "../../../generated/prisma/client";
-import type { PaginationQuery } from "../../interfaces/payloads";
-import type { TUpdateProfilePayload } from "./technician.validation";
+import { prisma } from '../../lib/prisma';
+import AppError from '../../utils/AppError';
+import { parsePagination, buildMeta } from '../../utils/pagination';
+import { Prisma, BookingStatus } from '../../../generated/prisma/client';
+import type { PaginationQuery } from '../../interfaces/payloads';
+import { assertTransition } from '../booking/bookingStatus';
+import type { TUpdateProfilePayload } from './technician.validation';
 
-const getTechnicianBookings = async (userId: string) => {
+const getTechnicianBookings = async (
+  userId: string,
+  query: PaginationQuery
+) => {
   const technicianProfile = await prisma.technicianProfile.findUnique({
     where: { userId },
   });
 
   if (!technicianProfile) {
-    throw new AppError(404, "Technician profile not found!");
+    throw new AppError(404, 'Technician profile not found!');
   }
 
-  const result = await prisma.booking.findMany({
-    where: { technicianProfileId: technicianProfile.id },
-    include: {
-      service: true,
-      customer: { select: { name: true, email: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const { page, limit, skip, take, sortBy, sortOrder } = parsePagination(query);
+  const where = { technicianProfileId: technicianProfile.id };
 
-  return result;
+  const [data, total] = await Promise.all([
+    prisma.booking.findMany({
+      where,
+      skip,
+      take,
+      orderBy: {
+        [sortBy]: sortOrder,
+      } as Prisma.BookingOrderByWithRelationInput,
+      include: {
+        service: true,
+        customer: { select: { name: true, email: true } },
+      },
+    }),
+    prisma.booking.count({ where }),
+  ]);
+
+  return { data, meta: buildMeta(page, limit, total) };
 };
 
 const updateBookingStatus = async (
@@ -36,7 +50,7 @@ const updateBookingStatus = async (
   });
 
   if (!booking) {
-    throw new AppError(404, "Booking not found!");
+    throw new AppError(404, 'Booking not found!');
   }
 
   const technicianProfile = await prisma.technicianProfile.findUnique({
@@ -44,12 +58,14 @@ const updateBookingStatus = async (
   });
 
   if (!technicianProfile) {
-    throw new AppError(404, "Technician profile not found!");
+    throw new AppError(404, 'Technician profile not found!');
   }
 
   if (booking.technicianProfileId !== technicianProfile.id) {
-    throw new AppError(403, "You are not authorized to update this booking!");
+    throw new AppError(403, 'You are not authorized to update this booking!');
   }
+
+  assertTransition(booking.status, status);
 
   const result = await prisma.booking.update({
     where: { id: bookingId },
@@ -75,7 +91,10 @@ const updateProfile = async (
   return result;
 };
 
-const updateAvailability = async (userId: string, availabilityData: Prisma.InputJsonValue) => {
+const updateAvailability = async (
+  userId: string,
+  availabilityData: Prisma.InputJsonValue
+) => {
   const result = await prisma.technicianProfile.update({
     where: { userId },
     data: { availability: availabilityData },
@@ -94,11 +113,11 @@ type TechnicianQuery = PaginationQuery & {
 const getAllTechnicians = async (query: TechnicianQuery) => {
   const { page, limit, skip, take, sortBy, sortOrder } = parsePagination(query);
   const where: Prisma.TechnicianProfileWhereInput = {
-    user: { status: "ACTIVE" },
+    user: { status: 'ACTIVE' },
   };
 
   if (query.location) {
-    where.location = { contains: query.location, mode: "insensitive" };
+    where.location = { contains: query.location, mode: 'insensitive' };
   }
 
   if (query.minRating) {
@@ -107,8 +126,10 @@ const getAllTechnicians = async (query: TechnicianQuery) => {
 
   if (query.minHourlyRate || query.maxHourlyRate) {
     where.hourlyRate = {};
-    if (query.minHourlyRate) where.hourlyRate.gte = parseFloat(query.minHourlyRate);
-    if (query.maxHourlyRate) where.hourlyRate.lte = parseFloat(query.maxHourlyRate);
+    if (query.minHourlyRate)
+      where.hourlyRate.gte = parseFloat(query.minHourlyRate);
+    if (query.maxHourlyRate)
+      where.hourlyRate.lte = parseFloat(query.maxHourlyRate);
   }
 
   const [data, total] = await Promise.all([
@@ -116,7 +137,9 @@ const getAllTechnicians = async (query: TechnicianQuery) => {
       where,
       skip,
       take,
-      orderBy: { [sortBy]: sortOrder } as Prisma.TechnicianProfileOrderByWithRelationInput,
+      orderBy: {
+        [sortBy]: sortOrder,
+      } as Prisma.TechnicianProfileOrderByWithRelationInput,
       include: {
         user: { select: { name: true, email: true, status: true } },
       },
@@ -142,7 +165,7 @@ const getTechnicianById = async (id: string) => {
   });
 
   if (!result) {
-    throw new AppError(404, "Technician not found!");
+    throw new AppError(404, 'Technician not found!');
   }
 
   return result;
