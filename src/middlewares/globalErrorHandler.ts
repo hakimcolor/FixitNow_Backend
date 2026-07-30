@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from '../../generated/prisma/client';
-import AppError from '../utils/AppError';
 import config from '../config';
+import AppError from '../utils/AppError';
 
 type TErrorSource = { path: string; message: string };
 
