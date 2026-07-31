@@ -9,4 +9,4 @@ dist/prisma.config.js
 .windsurf
 .claude
 .agents
-.env
+config.bat
