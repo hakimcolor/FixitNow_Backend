@@ -70,7 +70,7 @@ router.patch(
   auth("TECHNICIAN"),
   validateParams(idParamValidationSchema),
   validateRequest(TechnicianValidations.updateBookingStatusValidationSchema),
-  
+  TechnicianControllers.updateBookingStatus,
 );
 
 /**
