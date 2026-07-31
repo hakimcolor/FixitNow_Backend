@@ -19,7 +19,14 @@ const getTechnicianBookings = async (
   }
 
   const { page, limit, skip, take, sortBy, sortOrder } = parsePagination(query);
-  const where = { technicianProfileId: technicianProfile.id };
+  const where: Prisma.BookingWhereInput = {
+    technicianProfileId: technicianProfile.id,
+  };
+
+  // Optional status filter
+  if ((query as any).status) {
+    where.status = (query as any).status;
+  }
 
   const [data, total] = await Promise.all([
     prisma.booking.findMany({
@@ -171,6 +178,35 @@ const getTechnicianById = async (id: string) => {
   return result;
 };
 
+const getMyServices = async (userId: string, query: PaginationQuery) => {
+  const technicianProfile = await prisma.technicianProfile.findUnique({
+    where: { userId },
+  });
+
+  if (!technicianProfile) {
+    throw new AppError(404, 'Technician profile not found!');
+  }
+
+  const { page, limit, skip, take, sortBy, sortOrder } = parsePagination(query);
+
+  const [data, total] = await Promise.all([
+    prisma.service.findMany({
+      where: { technicianProfileId: technicianProfile.id },
+      skip,
+      take,
+      orderBy: {
+        [sortBy]: sortOrder,
+      } as Prisma.ServiceOrderByWithRelationInput,
+      include: { category: true },
+    }),
+    prisma.service.count({
+      where: { technicianProfileId: technicianProfile.id },
+    }),
+  ]);
+
+  return { data, meta: buildMeta(page, limit, total) };
+};
+
 export const TechnicianServices = {
   getTechnicianBookings,
   updateBookingStatus,
@@ -178,4 +214,5 @@ export const TechnicianServices = {
   updateAvailability,
   getAllTechnicians,
   getTechnicianById,
+  getMyServices,
 };

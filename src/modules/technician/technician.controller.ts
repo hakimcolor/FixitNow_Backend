@@ -79,6 +79,20 @@ const getTechnicianById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyServices = catchAsync(async (req: Request, res: Response) => {
+  const { data, meta } = await TechnicianServices.getMyServices(
+    req.user!.id,
+    req.query
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: 'Technician services retrieved successfully!',
+    meta,
+    data,
+  });
+});
+
 export const TechnicianControllers = {
   getTechnicianBookings,
   updateBookingStatus,
@@ -86,4 +100,5 @@ export const TechnicianControllers = {
   updateAvailability,
   getAllTechnicians,
   getTechnicianById,
+  getMyServices,
 };

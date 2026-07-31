@@ -1,11 +1,14 @@
-import express from "express";
-import { TechnicianControllers } from "./technician.controller";
-import { TechnicianValidations } from "./technician.validation";
-import validateRequest from "../../middlewares/validateRequest";
-import validateParams from "../../middlewares/validateParams";
-import { idParamValidationSchema, paginationQuerySchema } from "../../validations";
-import { auth } from "../../middlewares/auth";
-import validateQuery from "../../middlewares/validateQuery";
+import express from 'express';
+import { TechnicianControllers } from './technician.controller';
+import { TechnicianValidations } from './technician.validation';
+import validateRequest from '../../middlewares/validateRequest';
+import validateParams from '../../middlewares/validateParams';
+import {
+  idParamValidationSchema,
+  paginationQuerySchema,
+} from '../../validations';
+import { auth } from '../../middlewares/auth';
+import validateQuery from '../../middlewares/validateQuery';
 
 const router = express.Router();
 
@@ -29,10 +32,29 @@ const router = express.Router();
  *         description: List of bookings
  */
 router.get(
-  "/bookings",
-  auth("TECHNICIAN"),
+  '/bookings',
+  auth('TECHNICIAN'),
   validateQuery(paginationQuerySchema),
-  TechnicianControllers.getTechnicianBookings,
+  TechnicianControllers.getTechnicianBookings
+);
+
+/**
+ * @swagger
+ * /api/technician/services:
+ *   get:
+ *     summary: Get technician's own services
+ *     tags: [Technician]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of technician's services
+ */
+router.get(
+  '/services',
+  auth('TECHNICIAN'),
+  validateQuery(paginationQuerySchema),
+  TechnicianControllers.getMyServices
 );
 
 /**
@@ -66,11 +88,11 @@ router.get(
  *         description: Booking updated
  */
 router.patch(
-  "/bookings/:id",
-  auth("TECHNICIAN"),
+  '/bookings/:id',
+  auth('TECHNICIAN'),
   validateParams(idParamValidationSchema),
   validateRequest(TechnicianValidations.updateBookingStatusValidationSchema),
-  TechnicianControllers.updateBookingStatus,
+  TechnicianControllers.updateBookingStatus
 );
 
 /**
@@ -101,10 +123,10 @@ router.patch(
  *         description: Profile updated
  */
 router.put(
-  "/profile",
-  auth("TECHNICIAN"),
+  '/profile',
+  auth('TECHNICIAN'),
   validateRequest(TechnicianValidations.updateProfileValidationSchema),
-  TechnicianControllers.updateProfile,
+  TechnicianControllers.updateProfile
 );
 
 /**
@@ -169,10 +191,10 @@ router.put(
  *         description: Technician profile not found
  */
 router.put(
-  "/availability",
-  auth("TECHNICIAN"),
+  '/availability',
+  auth('TECHNICIAN'),
   validateRequest(TechnicianValidations.updateAvailabilityValidationSchema),
-  TechnicianControllers.updateAvailability,
+  TechnicianControllers.updateAvailability
 );
 
 const listingRouter = express.Router();
@@ -197,9 +219,9 @@ const listingRouter = express.Router();
  *         description: List of technicians
  */
 listingRouter.get(
-  "/",
+  '/',
   validateQuery(paginationQuerySchema),
-  TechnicianControllers.getAllTechnicians,
+  TechnicianControllers.getAllTechnicians
 );
 
 /**
@@ -219,9 +241,9 @@ listingRouter.get(
  *         description: Technician details
  */
 listingRouter.get(
-  "/:id",
+  '/:id',
   validateParams(idParamValidationSchema),
-  TechnicianControllers.getTechnicianById,
+  TechnicianControllers.getTechnicianById
 );
 
 export const TechnicianRoutes = router;
