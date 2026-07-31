@@ -85,9 +85,23 @@ const stripeWebhook = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const confirmPayment = catchAsync(async (req: Request, res: Response) => {
+  const result = await PaymentServices.confirmPayment(
+    req.body.sessionId,
+    req.user!.id
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: 'Payment confirmed successfully!',
+    data: result,
+  });
+});
+
 export const PaymentControllers = {
   createCheckoutSession,
   getUserPaymentHistory,
   getPaymentById,
+  confirmPayment,
   stripeWebhook,
 };

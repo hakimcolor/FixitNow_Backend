@@ -62,6 +62,7 @@ app.get('/', (_req, res) => {
 
 app.use('/api/auth', AuthRoutes);
 app.use('/api/services/technicians', TechnicianListingRoutes);
+app.use('/api/technicians', TechnicianListingRoutes); // spec-required public route
 app.use('/api/services', ServiceRoutes);
 app.use('/api/categories', CategoryRoutes);
 app.use('/api/bookings', BookingRoutes);

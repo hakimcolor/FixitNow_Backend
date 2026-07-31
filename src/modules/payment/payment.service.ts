@@ -255,9 +255,70 @@ const handleStripeEvent = async (event: Stripe.Event) => {
   }
 };
 
+const confirmPayment = async (sessionId: string, userId: string) => {
+  // Look up the payment by its Stripe session ID
+  const payment = await prisma.payment.findFirst({
+    where: { stripeCheckoutSessionId: sessionId },
+    include: { booking: true },
+  });
+
+  if (!payment) {
+    throw new AppError(404, 'Payment record not found for this session!');
+  }
+
+  if (payment.booking.customerId !== userId) {
+    throw new AppError(403, 'You are not authorized to confirm this payment!');
+  }
+
+  // Already confirmed — idempotent response
+  if (payment.status === 'COMPLETED') {
+    return payment;
+  }
+
+  // Ask Stripe for the current session status
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (session.payment_status !== 'paid') {
+    throw new AppError(
+      400,
+      'Payment has not been completed on Stripe side yet!'
+    );
+  }
+
+  const paymentIntentId =
+    typeof session.payment_intent === 'string'
+      ? session.payment_intent
+      : session.payment_intent?.id;
+
+  const amount = (session.amount_total ?? 0) / 100;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: 'COMPLETED',
+        transactionId: paymentIntentId ?? sessionId,
+        amount,
+        paidAt: new Date(),
+      },
+    });
+
+    await tx.booking.update({
+      where: { id: payment.bookingId },
+      data: { status: 'PAID' },
+    });
+  });
+
+  return prisma.payment.findUnique({
+    where: { id: payment.id },
+    include: { booking: { select: { id: true, status: true } } },
+  });
+};
+
 export const PaymentServices = {
   createCheckoutSession,
   getUserPaymentHistory,
   getPaymentById,
+  confirmPayment,
   handleStripeEvent,
 };
