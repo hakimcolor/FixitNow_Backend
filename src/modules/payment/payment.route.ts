@@ -61,54 +61,6 @@ router.post(
   PaymentControllers.createCheckoutSession
 );
 
-// /checkout is kept as an alias for /create
-router.post(
-  '/checkout',
-  auth('CUSTOMER'),
-  validateRequest(PaymentValidations.createCheckoutSessionValidationSchema),
-  PaymentControllers.createCheckoutSession
-);
-
-/**
- * @swagger
- * /api/payments/confirm:
- *   post:
- *     summary: Confirm/verify a Stripe payment by session ID
- *     description: |
- *       Verifies a Stripe Checkout Session status and manually confirms the payment.
- *       Use this as a fallback after the customer is redirected back from Stripe.
- *       If the session was paid, the booking is marked PAID and payment COMPLETED.
- *     tags: [Payment]
- *     security:
- *       - cookieAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - sessionId
- *             properties:
- *               sessionId:
- *                 type: string
- *                 description: Stripe Checkout Session ID returned from /create
- *                 example: "cs_test_..."
- *     responses:
- *       200:
- *         description: Payment confirmed or already completed
- *       400:
- *         description: Payment not completed on Stripe side yet
- *       404:
- *         description: Session or payment record not found
- */
-router.post(
-  '/confirm',
-  auth('CUSTOMER'),
-  validateRequest(PaymentValidations.confirmPaymentValidationSchema),
-  PaymentControllers.confirmPayment
-);
-
 /**
  * @swagger
  * /api/payments:

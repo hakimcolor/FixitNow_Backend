@@ -1,8 +1,8 @@
-import express from "express";
-import { AuthControllers } from "./auth.controller";
-import { AuthValidations } from "./auth.validation";
-import validateRequest from "../../middlewares/validateRequest";
-import { auth } from "../../middlewares/auth";
+import express from 'express';
+import { AuthControllers } from './auth.controller';
+import { AuthValidations } from './auth.validation';
+import validateRequest from '../../middlewares/validateRequest';
+import { auth } from '../../middlewares/auth';
 
 const router = express.Router();
 
@@ -79,9 +79,9 @@ const router = express.Router();
  *         description: Email already exists
  */
 router.post(
-  "/register",
+  '/register',
   validateRequest(AuthValidations.registerValidationSchema),
-  AuthControllers.registerUser,
+  AuthControllers.registerUser
 );
 
 /**
@@ -138,9 +138,9 @@ router.post(
  *         description: User not found
  */
 router.post(
-  "/login",
+  '/login',
   validateRequest(AuthValidations.loginValidationSchema),
-  AuthControllers.loginUser,
+  AuthControllers.loginUser
 );
 
 /**
@@ -172,167 +172,10 @@ router.post(
  *       404:
  *         description: User not found
  */
-router.get("/me", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.getMe);
-
-/**
- * @swagger
- * /api/auth/me:
- *   patch:
- *     summary: Update current user profile
- *     description: Updates the authenticated user's profile information (name, email, password, bio, skills, experience, hourlyRate, location).
- *     tags: [Auth]
- *     security:
- *       - cookieAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Johnathan Doe
- *               email:
- *                 type: string
- *                 format: email
- *                 example: john.updated@example.com
- *               password:
- *                 type: string
- *                 format: password
- *                 example: newsecret123
- *               bio:
- *                 type: string
- *                 example: Experienced credit restoration specialist.
- *               skills:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["Credit Repair", "Score Monitoring"]
- *               experience:
- *                 type: number
- *                 example: 5
- *               hourlyRate:
- *                 type: number
- *                 example: 75
- *               location:
- *                 type: string
- *                 example: New York, NY
- *     responses:
- *       200:
- *         description: Profile updated successfully
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               statusCode: 200
- *               message: "Profile updated successfully!"
- *               data:
- *                 id: "uuid"
- *                 name: "Johnathan Doe"
- *                 email: "john.updated@example.com"
- *                 role: "CUSTOMER"
- *       400:
- *         description: Validation error
- *       401:
- *         description: Unauthorized
- *       409:
- *         description: Email is already taken
- */
-router.patch(
-  "/me",
-  auth("CUSTOMER", "TECHNICIAN", "ADMIN"),
-  validateRequest(AuthValidations.updateProfileValidationSchema),
-  AuthControllers.updateProfile
+router.get(
+  '/me',
+  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  AuthControllers.getMe
 );
-
-/**
- * @swagger
- * /api/auth/me:
- *   delete:
- *     summary: Delete current user profile
- *     description: Deletes the authenticated user's account and clears auth cookies.
- *     tags: [Auth]
- *     security:
- *       - cookieAuth: []
- *     responses:
- *       200:
- *         description: User account deleted successfully
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               statusCode: 200
- *               message: "User account deleted successfully!"
- *               data: null
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: User not found
- */
-router.delete("/me", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.deleteProfile);
-
-/**
- * @swagger
- * /api/auth/logout:
- *   post:
- *     summary: Logout user
- *     description: Clears the accessToken and refreshToken HTTP-only cookies.
- *     tags: [Auth]
- *     security:
- *       - cookieAuth: []
- *         description: JWT access token
- *     responses:
- *       200:
- *         description: Logout successful, cookies cleared
- *         headers:
- *           Set-Cookie:
- *             description: Cleared accessToken and refreshToken cookies
- *             schema:
- *               type: string
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               statusCode: 200
- *               message: "Logged out successfully"
- *               data: null
- */
-router.post("/logout", auth("CUSTOMER", "TECHNICIAN", "ADMIN"), AuthControllers.logout);
-
-/**
- * @swagger
- * /api/auth/refresh:
- *   post:
- *     summary: Refresh token
- *     description: Issues a new access token and rotates the refresh token using the refreshToken cookie.
- *     tags: [Auth]
- *     security:
- *       - cookieAuth: []
- *         description: JWT refresh token (HTTP-only)
- *     responses:
- *       200:
- *         description: Access token refreshed successfully
- *         headers:
- *           Set-Cookie:
- *             description: New accessToken and refreshToken cookies
- *             schema:
- *               type: string
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               statusCode: 200
- *               message: "Access token refreshed successfully!"
- *               data:
- *                 refreshed: true
- *       401:
- *         description: Refresh token missing, invalid, or expired
- *       403:
- *         description: User is banned
- *       404:
- *         description: User not found
- */
-router.post("/refresh", AuthControllers.refreshToken);
 
 export const AuthRoutes = router;
