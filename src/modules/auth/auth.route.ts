@@ -178,4 +178,21 @@ router.get(
   AuthControllers.getMe
 );
 
+router.post('/logout', AuthControllers.logout);
+
+router.post('/refresh-token', AuthControllers.refreshToken);
+
+router.patch(
+  '/update-profile',
+  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  validateRequest(AuthValidations.updateProfileValidationSchema),
+  AuthControllers.updateProfile
+);
+
+router.delete(
+  '/delete-account',
+  auth('CUSTOMER', 'TECHNICIAN', 'ADMIN'),
+  AuthControllers.deleteProfile
+);
+
 export const AuthRoutes = router;

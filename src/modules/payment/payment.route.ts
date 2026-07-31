@@ -105,4 +105,6 @@ router.get(
   PaymentControllers.getPaymentById
 );
 
+router.post('/confirm', auth('CUSTOMER'), PaymentControllers.confirmPayment);
+
 export const PaymentRoutes = router;
