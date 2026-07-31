@@ -1087,7 +1087,7 @@ var stripe_default = stripe;
 // src/modules/booking/bookingStatus.ts
 var VALID_TRANSITIONS = {
   REQUESTED: ["ACCEPTED", "DECLINED", "CANCELLED"],
-  ACCEPTED: ["PAID", "IN_PROGRESS", "CANCELLED"],
+  ACCEPTED: ["PAID", "DECLINED", "IN_PROGRESS", "CANCELLED"],
   PAID: ["IN_PROGRESS", "CANCELLED"],
   IN_PROGRESS: ["COMPLETED"],
   COMPLETED: [],

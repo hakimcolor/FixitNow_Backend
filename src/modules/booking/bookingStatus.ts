@@ -3,7 +3,7 @@ import AppError from '../../utils/AppError';
 
 const VALID_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
   REQUESTED: ['ACCEPTED', 'DECLINED', 'CANCELLED'],
-  ACCEPTED: ['PAID', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
+  ACCEPTED: ['PAID', 'DECLINED', 'IN_PROGRESS', 'CANCELLED'],
   PAID: ['IN_PROGRESS', 'CANCELLED'],
   IN_PROGRESS: ['COMPLETED'],
   COMPLETED: [],
