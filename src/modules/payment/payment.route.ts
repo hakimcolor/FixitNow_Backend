@@ -98,7 +98,12 @@ router.get(
  *       200:
  *         description: Payment details
  */
-router.post('/confirm', auth('CUSTOMER'), PaymentControllers.confirmPayment);
+router.post(
+  '/confirm',
+  auth('CUSTOMER'),
+  validateRequest(PaymentValidations.confirmPaymentValidationSchema),
+  PaymentControllers.confirmPayment
+);
 
 router.get(
   '/:id',
