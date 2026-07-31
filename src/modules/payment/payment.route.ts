@@ -98,13 +98,13 @@ router.get(
  *       200:
  *         description: Payment details
  */
+router.post('/confirm', auth('CUSTOMER'), PaymentControllers.confirmPayment);
+
 router.get(
   '/:id',
   auth('CUSTOMER', 'ADMIN'),
   validateParams(idParamValidationSchema),
   PaymentControllers.getPaymentById
 );
-
-router.post('/confirm', auth('CUSTOMER'), PaymentControllers.confirmPayment);
 
 export const PaymentRoutes = router;

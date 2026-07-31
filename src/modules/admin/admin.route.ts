@@ -111,4 +111,25 @@ router.get(
   AdminControllers.getAllBookings
 );
 
+router.get(
+  '/bookings/:id',
+  auth('ADMIN'),
+  validateParams(idParamValidationSchema),
+  AdminControllers.getBookingById
+);
+
+router.get(
+  '/payments',
+  auth('ADMIN'),
+  validateQuery(paginationQuerySchema),
+  AdminControllers.getAllPayments
+);
+
+router.get(
+  '/payments/:id',
+  auth('ADMIN'),
+  validateParams(idParamValidationSchema),
+  AdminControllers.getPaymentById
+);
+
 export const AdminRoutes = router;
